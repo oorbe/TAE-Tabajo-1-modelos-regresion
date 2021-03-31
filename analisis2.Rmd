@@ -1,0 +1,144 @@
+---
+title: "analisis2"
+author: "Juan Manuel Pajoy López"
+date: "27/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+base <- read.csv("Servicios del hogar.csv",header = TRUE,sep=";",dec=",")
+
+```
+
+
+```{r}
+names(base)
+```
+
+```{r}
+base_red<-base[,c("ï..DIRECTORIO", "SECUENCIA_ENCUESTA", "SECUENCIA_P", "ORDEN", "P5000","P5010","P5016S4", "P3000", "P5666", "P8526", "P1892S4", "P5047", "P8534", "P5305", "I_HOGAR", "CANT_PERSONAS_HOGAR")]
+head(base_red)
+```
+```{r}
+names(base_red)
+```
+
+```{r}
+base_red$P5016S4[base_red$P5016S4 == "1"] <- "0"
+```
+
+
+
+```{r}
+
+base_red$P5016S4[is.na(base_red$P5016S4)] <- "1"
+
+```
+
+
+```{r}
+base_red$P1892S4[base_red$P1892S4 == "1"] <- "0"
+```
+
+
+
+```{r}
+
+base_red$P1892S4[is.na(base_red$P1892S4)] <- "1"
+
+```
+
+```{r}
+base_red$P5047[is.na(base_red$P5047)] <- "2"
+```
+
+
+```{r}
+base_red$P5666[base_red$P5666 == "2"] <- "0"
+```
+
+
+```{r}
+base_red$P5047[base_red$P5047 == "2"] <- "0"
+```
+
+
+```{r}
+base_red$P5305[base_red$P5305 == "2"] <- "0"
+```
+
+```{r}
+
+names(base_red)[names(base_red) == 'P5016S4'] <- 'PROBLEMAS_ENERGÍA'
+
+
+#Fuente: https://www.iteramos.com/pregunta/35409/-como-se-puede-cambiar-el-nombre-de-una-sola-columna-en-un-cuadro-de-datos-en-r-
+
+```
+
+```{r}
+names(base_red)[names(base_red) == 'P5000'] <- 'N_CUARTOS'
+
+names(base_red)[names(base_red) == 'P5010'] <- 'N_CUARTOS_DUERMEN'
+
+names(base_red)[names(base_red) == 'P5047'] <- 'AGUA_24_HORAS'
+
+names(base_red)[names(base_red) == 'P1892S4'] <- 'TIENE_LAVADERO'
+
+names(base_red)[names(base_red) == 'P5305'] <- 'TIENE_TELÉFONO'
+
+```
+
+```{r}
+names(base_red)
+```
+
+
+```{r}
+base_fin<-base_red[,c("ï..DIRECTORIO", "SECUENCIA_ENCUESTA", "SECUENCIA_P", "ORDEN", "N_CUARTOS","N_CUARTOS_DUERMEN","PROBLEMAS_ENERGÍA", "P3000", "P5666", "P8526", "TIENE_LAVADERO", "AGUA_24_HORAS", "TIENE_TELÉFONO", "I_HOGAR", "CANT_PERSONAS_HOGAR")]
+```
+
+```{r}
+names(base_fin)[names(base_fin) == 'P3000'] <- 'FUENTE_ILUMINACION'
+names(base_fin)[names(base_fin) == 'P8526'] <- 'SERVICIO_SANITARIO'
+names(base_fin)[names(base_fin) == 'P5666'] <- 'TIENE_GAS'
+```
+
+VALORES PARA: 
+- FUENTE_ILUMUNACION:
+  1 Energía eléctrica
+  2 Lámpara de Gas Propano
+  3 Lámpara de Kereosene, petróleo, gasolina
+  4 Lámpara de pilas o baterias
+  5 Velas
+  
+- SERVICIO SANITARIO:
+  1 Inodoro conectado a alcantarillado
+  2 Inodoro conectado a pozo séptico
+  3 Inodoro sin conexión
+  4 Letrina
+  5 Inodoro con descarga directa a fuentes de agua (bajamar)
+  6 No tiene servicio sanitario
+  
+
+```{r}
+summary(base_fin)
+```
+```{r}
+names(base_fin)
+```
+
+
+
+
+## Selección de variables
+
+
+
+Me falta definir el por que de las variables
+
+## La base de datos es base_fin
