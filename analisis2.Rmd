@@ -142,3 +142,8 @@ names(base_fin)
 Me falta definir el por que de las variables
 
 ## La base de datos es base_fin
+
+```{r}
+write.csv(base_fin,"sHogarRed.csv", row.names = FALSE)
+```
+

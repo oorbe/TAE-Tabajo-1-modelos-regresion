@@ -1,0 +1,12 @@
+name: Trabajo1
+title: Trabajo1
+username:
+account: jpajoyl
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3897929
+bundleId: 4422174
+url: https://jpajoyl.shinyapps.io/Trabajo1/
+when: 1617312825.36325
+asMultiple: FALSE
+asStatic: FALSE
