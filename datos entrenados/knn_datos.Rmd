@@ -1,0 +1,317 @@
+---
+title: "TAE1_KNN"
+author: "Sara Hoyos"
+date: "3 de abril de 2021"
+output: html_document
+---
+
+```{r,include=FALSE}
+# load libraries
+library(caret)
+library(tidyverse)
+library(dplyr)
+library(mlbench)
+library(tidyr)
+library(fastDummies)
+library(randomForest)
+
+```
+
+```{r setup, include=FALSE}
+# Directorio de trabajo 
+setwd("C:/Users/Sara/OneDrive/Documentos/Semestre 01-2021/TAE/Trabajo 1/Datos")
+# Lectura de base de datos 
+Datos <- read.csv("datos.csv",header = TRUE)
+```
+
+### Selección de Variables 
+
+El paquete **caret R** proporciona herramientas para informar automáticamente sobre la relevancia e importancia de los atributos en los datos e incluso seleccionar las características más importantes. Se analizará la **Matriz de correlación** para identificar atributos altamente correlacionados y eliminarlos. 
+
+Selección de la base de datos con las caracteristicas del hogar, las cuales son nuestras variables predictivas 
+
+```{r}
+# Observamos la correlación entre las variables numericas 
+Datos_num <- Datos[,c(3:9)]
+cor_dt <- cor(Datos_num)
+cor_dtHIGH <- findCorrelation(cor_dt,cutoff = 0.5)
+# Encontramos que no hay correlaciones mayores a 0.5
+
+# Variables predictivas
+Datos_pred <- Datos[,c(2:20)]
+```
+
+Cálculo de la desviación estándar: 
+```{r}
+round(apply(Datos_num,2,sd),2)
+```
+
+## KNN 
+
+```{r}
+# Creación de variables dummies 
+Datos_pred <- dummy_cols(Datos_pred, select_columns = c("vive_con_conyuge","nvl_educacion_papa",
+                                           "nvl_educacion_mama","rasgos","campesino",
+                                           "actividad_semana_pasada","A_EPS","SEG_SOCIAL_SALUD",
+                                  "vivienda_es","REGION","TIPO_VIVIENDA"),remove_selected_columns  = TRUE)
+```
+
+### Normalizacón de los datos 
+
+```{r}
+Datos_pred_cent <-scale(Datos_pred,center=TRUE,scale=TRUE)
+centro<-attr(Datos_pred_cent,"scaled:center")
+escala<-attr(Datos_pred_cent,"scaled:scale")
+Datos_pred_cent<-as.data.frame(Datos_pred_cent)
+```
+
+### Particionamiento del conjunto de datos
+
+```{r}
+set.seed(123)
+# Se crean los índices de las observaciones de entrenamiento
+train <- createDataPartition(y = Datos_pred_cent$n, p = 0.85, list = FALSE, times = 1)
+datos_train <- Datos_pred_cent[train, ]
+datos_test  <- Datos_pred_cent[-train, ]
+
+# k=1 
+inicio <- Sys.time()
+knnn <- knnreg(n~. ,data = datos_train, k=1)
+predict1 <- predict(knnn, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE1 <- sqrt(mean((predict1-datos_test$n)^2))
+
+saveRDS(knnn,'knn.rds')
+rm(knnn)
+knnn <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p <- predict(knnn, newdata = datos_test[1,])
+
+summary(prueba)
+
+```
+
+
+Verificar que la variable tenga la misma distribución en el conjunto de datos de entrenamiento y de prueba: 
+
+```{r}
+round(prop.table(table(datos_train$n)),2)
+```
+
+```{r}
+round(prop.table(table(datos_test$n)),2)
+```
+
+**K=3**
+
+```{r}
+inicio <- Sys.time()
+knn3 <- knnreg(n~. ,data = datos_train, k=3)
+predict3 <- predict(knn3, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE3 <- sqrt(mean((predict3-datos_test$n)^2))
+
+saveRDS(knn3,'knn.rds')
+rm(knn3)
+knn3 <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p3 <- predict(knn3, newdata = datos_test[1,])
+
+```
+
+**K=5**
+
+```{r}
+inicio <- Sys.time()
+knn5 <- knnreg(n~. ,data = datos_train, k=5)
+predict5 <- predict(knn5, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE5 <- sqrt(mean((predict5-datos_test$n)^2))
+
+saveRDS(knn5,'knn.rds')
+rm(knn5)
+knn5 <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p5 <- predict(knn5, newdata = datos_test[1,])
+
+```
+
+**K=10**
+
+```{r}
+inicio <- Sys.time()
+knn10 <- knnreg(n~. ,data = datos_train, k=10)
+predict10 <- predict(knn10, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE10 <- sqrt(mean((predict10-datos_test$n)^2))
+
+saveRDS(knn10,'knn.rds')
+rm(knn10)
+knn10 <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p10 <- predict(knn10, newdata = datos_test[1,])
+
+```
+
+**K=15**
+
+```{r}
+inicio <- Sys.time()
+knn15 <- knnreg(n~. ,data = datos_train, k=15)
+predict15 <- predict(knn15, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE15 <- sqrt(mean((predict15-datos_test$n)^2))
+
+saveRDS(knn15,'knn.rds')
+rm(knn15)
+knn15 <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p15 <- predict(knn15, newdata = datos_test[1,])
+
+```
+
+** K=20**
+
+```{r}
+inicio <- Sys.time()
+knn20 <- knnreg(n~. ,data = datos_train, k=20)
+predict20 <- predict(knn20, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE20 <- sqrt(mean((predict20-datos_test$n)^2))
+
+saveRDS(knn20,'knn.rds')
+rm(knn20)
+knn20 <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p20 <- predict(knn20, newdata = datos_test[1,])
+
+```
+
+**K=30**
+
+```{r}
+inicio <- Sys.time()
+knn30 <- knnreg(n~. ,data = datos_train, k=30)
+predict30 <- predict(knn30, newdata = datos_test)
+fin <- Sys.time()
+fin-inicio
+RMSE30 <- sqrt(mean((predict30-datos_test$n)^2))
+
+saveRDS(knn30,'knn.rds')
+rm(knn30)
+knn30 <- readRDS('knn.rds')
+
+prueba <- datos_test[1,]
+p30 <- predict(knn30, newdata = datos_test[1,])
+```
+
+Una vez probada la modelación con knnreg() con todas las variables predictivas de nuestra base de datos se encontro que el menor RMSE se tiene con k=20, a medidas que se aumenta k no se observa diferencia significativa en la mejora del RMSE, es decir de que este entregue resultados menores por lo cual utilizaremos este para entrenar y validar nuestros datos, asi mismo para usarlo como estimación en nuestra app web. 
+
+Aplicando el inverso de escalamiento de los datos para observar el valor real: 
+
+```{r}
+# Predicción del número de hijos para la fila 1 de mi base de datos de prueba. 
+p20*escala[1]+centro[1]
+```
+
+
+### Proceso general: 
+El analisis previo del conjunto de datos Calidad de vida en Colombia, encontrados en el sitio web del DANE se basó inicialmente en lectura informativas que nos llevaran a entender mejor el problema de predicción de número de hijos mediantes las caracteristicas de un hogar. Se discute cada base de datos que conformaba el conjunto total y se realiza una selección de las variables significativas ya obtenido un conocimiento previo mediante estudios y articulos encontrados en la web. 
+
+Una vez seleccionadas nuestras variables y obtenido nuestro conjunto de datos final se realiza un analisis de correlación entre variables númericas para asi determinar y descartar variables posiblementes redundantes para nuestro analísis. No se encuentran correlaciones mayores a $0.75$ por lo que se determina dejar todas las variables para predecir el número de hijos. 
+
+
+Se realizá unas series de pruebas utilizando KNN tanto en la programación paso a paso implementada en clase como con las funciones disponibles en el paquete de Caret; los resultados no fueron optimos debido al tiempo que toma KNN en realizar un proceso de selección de variables y esto es debido a que escanea la base de datos histórica cada vez que se necesita una predicción.
+
+Teniendo en cuenta esto se fundamenta la elección previa basada en articulos y en varias discucines entre los miembros sobre la interpretación y reinterpretación de las variables tenidas en cuenta en nuestra base resultante final. 
+
+### Función para encontrar los vecinos mas cercanos y promediar sus respuestas: 
+
+```{r}
+fknn<-function(x,k,X_tr,Y_tr){
+  # x: observación a predecir
+  # k: cuántos vecinos más cercanos se deben hallar
+  # X0: dataframe o matriz con los datos de entrenamiento
+  # Y0: respuesta asociada a X0
+  xX<-rbind(x,X_tr) # Se concatenan x y X
+  distancias<-as.matrix(dist(xX)) # Se calcula la matriz de distancias y se convierte a la clase matrix
+  d_vec<-distancias[1,-1] # Se selecciona la columna 1 que corresponde a todas las distancias con respecto a x
+  orden<-sort(d_vec,index.return=TRUE) # Se ordenan las distancias en forma ascendente
+  k_vecinos<-orden$ix[1:k] # se obtienen los índices de los k vecinos más cercanos
+  respuestas_knn<-Y_tr[k_vecinos] # se extraen las respuestas correspondientes a los k vecinos más cercanos
+  r_knn<-mean(respuestas_knn) # se promedian las respuestas de los k vecinos más cercanos
+  return(r_knn)
+}
+```
+
+```{r}
+# n<-dim(Datos_pred)[1]
+# n_vl<-round(n*0.25)
+# set.seed(20190930) # Se fija la semilla para obtener
+#                    # resultados reproducibles
+# ix_vl<-sample(1:n,n_vl,replace = FALSE)
+# X_tr<-Datos_pred[-ix_vl,c(2:46)]
+# X_vl<-Datos_pred[ix_vl,c(2:46)]
+# Y_tr<-Datos_pred$n[-ix_vl]
+# Y_vl<-Datos_pred$n[ix_vl]
+# ```
+# 
+# 
+# ```{r}
+# fknn(x=X_vl[1,],k=3,X_tr=X_tr,Y_tr=Y_tr)
+```
+
+Selección de predictores relevantes
+### knn es muy lento cuando se tienen muchas observaciones por que escanea la base de datos hisotorica para hacer predicciones 
+
+**Caret::varImp** : cálculo de la importancia de la variable para modelos de regresión y clasificación
+
+Para cálcular la importancia de una variable primero ajustamos un modelo genérico lm() con un subconjunto de nuestra base de datos (Datos de entrenamiento)
+
+```{r}
+# # prepare training scheme
+# control <- trainControl(method="repeatedcv", number=3, repeats=1)
+# # train the model
+# model <- train(n~., data=datos_train, method="knn", preProcess="scale", trControl=control)
+# # estimate variable importance
+# importance <- varImp(model, scale=FALSE)
+# # summarize importance
+# print(importance)
+# # plot importance
+# plot(importance)
+```
+
+```{r}
+# set.seed(03042021)
+# 
+# # Se configura el método de selección de variables. Se utiliza K-fold cross-validation con K=3.
+# rctrl1 <- rfeControl(method = "cv",
+#                      number = 3,
+#                      returnResamp = "all",
+#                      functions = caretFuncs,
+#                      saveDetails = TRUE)
+# 
+# # Selección de variables. Se configura para obtener el mejor modelo con 1 y con 2 variables (sizes=c(1,2)):
+# model_select <- rfe(n ~ ., data = datos_train,
+#              sizes = c(1, 5, 10, 15),
+#              method = "knn",
+#              metric = "RMSE",
+#              preProcess = c("center","scale"),
+#              trControl = trainControl(method = "cv",number = 3),
+#              tuneGrid = data.frame(k = 1:10),
+#              rfeControl = rctrl1)
+
+```
+

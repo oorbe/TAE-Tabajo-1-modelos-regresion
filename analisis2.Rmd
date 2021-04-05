@@ -147,3 +147,21 @@ Me falta definir el por que de las variables
 write.csv(base_fin,"sHogarRed.csv", row.names = FALSE)
 ```
 
+```{r}
+
+datos <- read.csv("datos.csv",header = TRUE,sep=",",dec=".")
+
+```
+```{r}
+summary(datos)
+```
+
+```{r}
+
+modeloknn20 <- readRDS("knn.RDS")
+
+predict(modeloknn20, newdata = c(""))
+
+
+```
+
