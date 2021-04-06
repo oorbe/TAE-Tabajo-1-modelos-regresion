@@ -10,6 +10,14 @@
 library(shiny)
 library(shinymaterial)
 
+library(caret)
+library(tidyverse)
+library(dplyr)
+library(mlbench)
+library(tidyr)
+library(fastDummies)
+library(randomForest)
+
 # Wrap shinymaterial apps in material_page
 ui <- material_page(
     title = "Prediccion de cantidad de hijos por hogar en Colombia",
@@ -41,11 +49,13 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Edad",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Edad del jefe del hogar"),
                         material_number_box(
-                            "age",
-                            "Edad del jefe",
+                            "edad",
+                            "",
                             0,
                             106,
                             initial_value = 48
@@ -56,15 +66,17 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Conyuge",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Vive con el conyuge"),
                         material_dropdown(
-                            "viv_cony",
-                            "Vive con el conyuge",
+                            "vive_con_conyuge",
+                            "",
                             choices = c(
                                 "Si" = 1,
                                 "No" = 2,
-                                "No responde" = 3
+                                "No tiene" = 3
                             )
                         )
                     )
@@ -74,14 +86,16 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Educacion",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Nivel de educacion del papa"),
                         material_dropdown(
-                            "ed_papa",
-                            "Nivel de educacion del papa",
+                            "nvl_educacion_papa",
+                            "",
                             choices = c(
-                                "Bachillerato" = 0,
-                                "Estudios superiores" = 1
+                                "Secundaria o menos" = 0,
+                                "Educacion superior" = 1
                             )
                         )
                     )
@@ -90,14 +104,16 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Educacion",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Nivel de educacion de la mama"),
                         material_dropdown(
-                            "ed_mama",
-                            "Nivel de educacion de la mama",
+                            "nvl_educacion_mama",
+                            "",
                             choices = c(
-                                "Bachillerato" = 0,
-                                "Estudios superiores" = 1
+                                "Secundaria o menos" = 0,
+                                "Educacion superior" = 1
                             )
                         ) 
                     )
@@ -108,15 +124,21 @@ ui <- material_page(
                 material_column(
                     width = 3,
                     material_card(
-                        title = "Raza",
+                        title = "Rasgos",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Segun sus razgos o pensamiento se considera"),
                         material_dropdown(
-                            "raza",
-                            "Considera que pertenece a una raza",
+                            "rasgos",
+                            "",
                             choices = c(
-                                "Si" = 1,
-                                "No" = 0
+                                "Indigena" = 1,
+                                "Gitano (a) (Rom)" = 1,
+                                "Raizal del archipielago de San Andres, Providencia y Santa Catalina" = 1,
+                                "Palenquero (a) de San Basilio" = 1,
+                                "Negro (a), mulato (a) (afrodescendiente), afrocolombiano(a)" = 1,
+                                "Ninguno de los anteriores" = 0
                             )
                         ) 
                     )
@@ -126,15 +148,17 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Campesino",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Se considera campesino"),
                         material_dropdown(
-                            "camp",
-                            "Se considera campesino",
+                            "campesino",
+                            "",
                             choices = c(
                                 "Si" = 1,
                                 "No" = 2,
-                                "No responde" = 3
+                                "No informa" = 9
                             )
                         )
                     )
@@ -143,11 +167,13 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Actividad",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Actividad que ocupo mas tiempo la semana pasada"),
                         material_dropdown(
-                            "act_sem_pas",
-                            "Actividad que ocupo la semana pasada",
+                            "actividad_semana_pasada",
+                            "",
                             choices = c(
                                 "Trabajando" = 1,
                                 "Buscando trabajo" = 2,
@@ -163,28 +189,32 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Horas",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Horas laboradas la semana anterior"),
                         material_number_box(
                             "horas",
-                            "Horas laboradas la semana anterior",
+                            "",
                             0,
                             120,
                             initial_value = 31
                         )
                     )
-                ),
+                )
             ),
             material_row(
                 material_column(
                     width = 3,
                     material_card(
                         title = "EPS",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Esta afiliado a alguna eps"),
                         material_dropdown(
-                            "eps",
-                            "Esta afiliado a seguridad social",
+                            "A_EPS",
+                            "",
                             choices = c(
                                 "Si" = 1,
                                 "No" = 2,
@@ -197,14 +227,17 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "S. social",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("A cual de los siguientes regimenes de seguridad social en salud esta afiliado"),
                         material_dropdown(
-                            "ss",
-                            "Seguridad social salud",
+                            "SEG_SOCIAL_SALUD",
+                            "",
                             choices = c(
-                                "Si" = 1,
-                                "No" = 2,
+                                "Contributivo (eps)" = 1,
+                                "Especial (fuerzas armadas, ecopetrol, universidades publicas, magisterio)" = 1,
+                                "Subsidiado (eps-s)" = 2,
                                 "No sabe, no informa" = 3
                             )
                         )
@@ -214,11 +247,13 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Edad hijo",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("A que edad tuvo su primer hijo (0 si no ha tenido hijos)"),
                         material_number_box(
-                            "edHijo",
-                            "A que edad tuvo su primer hijo",
+                            "X1ER_HIJO_EDAD",
+                            "",
                             0,
                             47,
                             initial_value = 10
@@ -229,28 +264,32 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Dispositivos",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Total de dispositivos con conexion a internet en la casa"),
                         material_number_box(
-                            "disp",
-                            "Total de dispositivos en la casa",
+                            "TOT_DISPOSITIVOS",
+                            "",
                             0,
                             7,
                             initial_value = 1
                         )
                     )
-                ),
+                )
             ),
             material_row(
                 material_column(
                     width = 3,
                     material_card(
                         title = "Ingresos",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Ingresos totales del hogar en el mes"),
                         material_number_box(
-                            "ing",
-                            "Ingresos del hogar",
+                            "I_HOGAR",
+                            "",
                             0,
                             300000000,
                             initial_value = 1727919
@@ -261,11 +300,13 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Energia",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Consumo de energia (pesos)"),
                         material_number_box(
-                            "ener",
-                            "Consumo de energia (pesos)",
+                            "ener_consumo",
+                            "",
                             0,
                             1000000,
                             initial_value = 44317
@@ -276,11 +317,13 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Gas",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Consumo de gas (Pesos)"),
                         material_number_box(
-                            "gas",
-                            "Consumo de gas (pesos)",
+                            "gas_consumo",
+                            "",
                             0,
                             300000,
                             initial_value = 8727
@@ -291,15 +334,17 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Vivienda",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Que tipo de vivienda tiene"),
                         material_dropdown(
-                            "vivienda",
-                            "Que tipo de vivienda tiene",
+                            "vivienda_es",
+                            "",
                             choices = c(
                                 "Propia" = 1,
-                                "Arrendada" = 2,
-                                "No sabe, no informa" = 3
+                                "Arriendo" = 2,
+                                "otros: permiso o posesion sin titulo o posesion colectiva" = 3
                             )
                         )
                     )
@@ -310,11 +355,13 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Region",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("En que region vive"),
                         material_dropdown(
-                            "reg",
-                            "En que region vive",
+                            "REGION",
+                            "",
                             choices = c(
                                 "Caribe" = 1,
                                 "Oriental" = 2,
@@ -333,14 +380,19 @@ ui <- material_page(
                     width = 3,
                     material_card(
                         title = "Vivienda",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
+                        tags$h6("Tipo de vivienda en que vive"),
                         material_dropdown(
-                            "t_vivienda",
-                            "Tipo de vivienda",
+                            "TIPO_VIVIENDA",
+                            "",
                             choices = c(
-                                "0" = 0,
-                                "1" = 1
+                                "Casa" = 1,
+                                "Apartamento" = 1,
+                                "Cuarto(s)" = 0,
+                                "Vivienda tradicional indigena" = 0,
+                                "Otro (carpa, contenedor, vagon, embarcacion, cueva, refugio natural, etc)" = 0
                             )
                         )
                     )
@@ -349,13 +401,17 @@ ui <- material_page(
                     width = 6,
                     material_card(
                         title = "Enviar",
+                        style = "height: 250px;",
                         divider = TRUE,
                         depth = 3,
                         tags$div(
                             align = "Center",
-                            material_button(
-                                "submit",
-                                "Enviar"
+                            material_modal(
+                                modal_id = "modal_result",
+                                button_text = "Resultado",
+                                button_icon = "open_in_browser",
+                                title = "Cantidad de hijos",
+                                textOutput("textoresultado")
                             )
                         )
                     )
@@ -377,6 +433,46 @@ ui <- material_page(
 )
 
 server <- function(input, output) {
+    modelofinal <- readRDS("knn.rds")
+    escala <- read.csv("escala.csv",header = TRUE,sep=",",dec=".")
+    centro <- read.csv("centro.csv",header = TRUE,sep=",",dec=".")
+    output$textoresultado <- renderText({
+        # columnas <- c("edad", "vive_con_conyuge", "nvl_educacion_papa", "nvl_educacion_mama", "rasgos", "campesino", "actividad_semana_pasada", "horas", "A_EPS", "SEG_SOCIAL_SALUD", "X1ER_HIJO_EDAD", "TOT_DISPOSITIVOS", "I_HOGAR", "ener_consumo", "gas_consumo", "vivienda_es", "REGION", "TIPO_VIVIENDA")
+        resultado <- c(input$edad, input$vive_con_conyuge, input$nvl_educacion_papa, input$nvl_educacion_mama, input$rasgos, input$campesino, input$actividad_semana_pasada, input$horas, input$A_EPS, input$SEG_SOCIAL_SALUD, input$X1ER_HIJO_EDAD, input$TOT_DISPOSITIVOS,input$I_HOGAR, input$ener_consumo, input$gas_consumo, input$vivienda_es, input$REGION, input$TIPO_VIVIENDA)
+        datos <- data.frame("edad" = c(as.numeric(resultado[1]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "vive_con_conyuge" = c(as.numeric(resultado[2]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "nvl_educacion_papa" = c(as.numeric(resultado[3]), 0, 1, 0, 0, 0, 0, 0, 0, 0), 
+                            "nvl_educacion_mama" = c(as.numeric(resultado[4]), 0, 1, 0, 0, 0, 0, 0, 0, 0), 
+                            "rasgos" = c(as.numeric(resultado[5]), 0, 1, 0, 0, 0, 0, 0, 0, 0), 
+                            "campesino" = c(as.numeric(resultado[6]), 1, 2, 9, 1, 1, 1, 1, 1, 1), 
+                            "actividad_semana_pasada" = c(as.numeric(resultado[7]), 1, 2, 3, 4, 5, 6, 1, 1, 1), 
+                            "horas" = c(as.numeric(resultado[8]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "A_EPS" = c(as.numeric(resultado[9]), 1, 2, 9, 1, 1, 1, 1, 1, 1), 
+                            "SEG_SOCIAL_SALUD" = c(as.numeric(resultado[10]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "X1ER_HIJO_EDAD" = c(as.numeric(resultado[11]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "TOT_DISPOSITIVOS" = c(as.numeric(resultado[12]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "I_HOGAR" = c(as.numeric(resultado[13]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "ener_consumo" = c(as.numeric(resultado[14]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "gas_consumo" = c(as.numeric(resultado[15]), 1, 2, 3, 1, 1, 1, 1, 1, 1), 
+                            "vivienda_es" = c(as.numeric(resultado[16]), 1, 2,3, 1, 1, 1, 1, 1, 1), 
+                            "REGION" = c(as.numeric(resultado[17]), 1, 2, 3, 4, 5 ,6, 7, 8, 9), 
+                            "TIPO_VIVIENDA" = c(as.numeric(resultado[18]), 1, 0, 1, 1, 1, 1, 1, 1, 1))
+        datos <- dummy_cols(datos, select_columns = c("vive_con_conyuge","nvl_educacion_papa",
+                                                      "nvl_educacion_mama","rasgos","campesino",
+                                                      "actividad_semana_pasada","A_EPS","SEG_SOCIAL_SALUD",
+                                                      "vivienda_es","REGION","TIPO_VIVIENDA"),remove_selected_columns  = TRUE)
+        
+        # Valor real 
+        fin_escala <- t(escala)[1, -1]
+        fin_centro <- t(centro)[1, -1]
+        c(length(fin_centro), length(fin_escala), length(as.numeric(datos[1,])))
     
-}
+        datos_norm <- (datos[1, ] - fin_centro) / fin_escala
+        names(datos_norm) <- names(datos)
+        datos_norm[1]
+        names(datos_norm)
+        p <- predict(modelofinal, newdata = data.frame(datos_norm))
+        p*t(escala)[1]+t(centro)[1]
+    })
+ }
 shinyApp(ui = ui, server = server)

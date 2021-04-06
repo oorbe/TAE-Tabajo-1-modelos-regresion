@@ -5,8 +5,8 @@ account: jpajoyl
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3897929
-bundleId: 4422174
+bundleId: 4435375
 url: https://jpajoyl.shinyapps.io/Trabajo1/
-when: 1617312825.36325
+when: 1617670436.04079
 asMultiple: FALSE
 asStatic: FALSE
