@@ -538,8 +538,8 @@ ui <- material_page(
                         ("Indica el tipo de la vivienda, en caso de que sea una casa o un apartamento se selecciona 1, si se trata de cuarto(s), vivienda tradicional indigena u otros se selecciona 0.")
                     )
                 )
-    )
-    )
+            )
+        )
     ),
     material_side_nav_tab_content(
         class = "container",
@@ -578,82 +578,82 @@ ui <- material_page(
                     )
                 )
             )
-    
-)
-)
+            
+        )
+    )
 )
 server<- function(input, output, session) {
     
-# Input Data
-datasetInput <- reactive({  
+    # Input Data
+    datasetInput <- reactive({  
+        
+        df <- data.frame(
+            Name = c("age",
+                     "viv_cony",
+                     "ed_papa",
+                     "ed_mama",
+                     "raza",
+                     "camp",
+                     "act_sem_pas",
+                     "horas",
+                     "eps",
+                     "ss",
+                     "edHijo",
+                     "disp",
+                     "ing",
+                     "ener",
+                     "gas",
+                     "vivienda",
+                     "reg",
+                     "t_vivienda"
+            ),
+            Value = as.character(c(input$age,
+                                   input$viv_cony,
+                                   input$ed_papa,
+                                   input$ed_mama,
+                                   input$raza,
+                                   input$camp,
+                                   input$act_sem_pas,
+                                   input$horas,
+                                   input$eps,
+                                   input$ss,
+                                   input$edHijo,
+                                   input$disp,
+                                   input$ing,
+                                   input$ener,
+                                   input$gas,
+                                   input$vivienda,
+                                   input$reg,
+                                   input$t_vivienda)),
+            stringsAsFactors = FALSE)
+        
+        #Species <- 0
+        #df <- rbind(df, Species)
+        #input <- transpose(df)
+        
+        write.table(input,"input.csv", sep=",", quote = FALSE, row.names = FALSE, col.names = FALSE)
+        
+        test <- read.csv(paste("input", ".csv", sep=""), header = TRUE)
+        
+        Output <- data.frame(Prediction=predict(model,test))
+        print(Output)
+    })
     
-    df <- data.frame(
-        Name = c("age",
-                 "viv_cony",
-                 "ed_papa",
-                 "ed_mama",
-                 "raza",
-                 "camp",
-                 "act_sem_pas",
-                 "horas",
-                 "eps",
-                 "ss",
-                 "edHijo",
-                 "disp",
-                 "ing",
-                 "ener",
-                 "gas",
-                 "vivienda",
-                 "reg",
-                 "t_vivienda"
-                 ),
-        Value = as.character(c(input$age,
-                               input$viv_cony,
-                               input$ed_papa,
-                               input$ed_mama,
-                               input$raza,
-                               input$camp,
-                               input$act_sem_pas,
-                               input$horas,
-                               input$eps,
-                               input$ss,
-                               input$edHijo,
-                               input$disp,
-                               input$ing,
-                               input$ener,
-                               input$gas,
-                               input$vivienda,
-                               input$reg,
-                               input$t_vivienda)),
-        stringsAsFactors = FALSE)
+    # Status/Output Text Box
+    output$contents <- renderPrint({
+        if (input$submit>0) { 
+            isolate("Calculation complete.") 
+        } else {
+            return("Server is ready for calculation.")
+        }
+    })
     
-    #Species <- 0
-    #df <- rbind(df, Species)
-    #input <- transpose(df)
-    
-    write.table(input,"input.csv", sep=",", quote = FALSE, row.names = FALSE, col.names = FALSE)
-    
-    test <- read.csv(paste("input", ".csv", sep=""), header = TRUE)
-    
-    Output <- data.frame(Prediction=predict(model,test))
-    print(Output)
-})
-
-# Status/Output Text Box
-output$contents <- renderPrint({
-    if (input$submit>0) { 
-        isolate("Calculation complete.") 
-    } else {
-        return("Server is ready for calculation.")
-    }
-})
-
-# Prediction results table
-output$tabledata <- renderTable({
-    if (input$submit>0) { 
-        isolate(datasetInput()) 
-    } 
-})
+    # Prediction results table
+    output$tabledata <- renderTable({
+        if (input$submit>0) { 
+            isolate(datasetInput()) 
+        } 
+    })
 }
 ###################################
 # Create the shiny app             #
