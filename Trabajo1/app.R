@@ -30,7 +30,7 @@ ui <- material_page(
         material_side_nav_tabs(
             side_nav_tabs = c(
                 "Prediccion de hijos" = "predChild",
-                "Graficas" = "chart",
+                "Variables" = "variables",
                 "Enlaces" = "link"
             ),
             icons = c("online_prediction", "insert_chart_outlined", "link")
@@ -421,13 +421,216 @@ ui <- material_page(
     ),
     material_side_nav_tab_content(
         class = "container",
-        side_nav_tab_id = "chart",
-        tags$h1("Second Side-Nav Tab Content")
+        side_nav_tab_id = "variables",
+        tags$div(
+            class = "",
+            style = "margin-top: 25px;
+                     margin-left: -125px;",
+            material_row(
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Edad del jefe",
+                        depth = 5,
+                        ("Corresponde a la edad del jefe del hogar del individuo, es decir aquel que lo sostiene economicamente."),
+                        divider=TRUE
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Conyuge",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica si el (la) conyugue del individuo vive en el hogar.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Nivel de educacion del papa",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Nivel de educacion maximo alcanzado por del papa del individuo, si es de secundaria o inferior debe seleccionarse la opcion bachillerato, si es cualquier tipo de estudio superior debe seleccionarse esta opcion.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Nivel de educacion de la mama",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Nivel de educacion maximo alcanzado por de la mama del individuo, si es de secundaria o inferior debe seleccionarse la opcion bachillerato, si es cualquier tipo de estudio superior debe seleccionarse esta opcion.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Raza",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica si de acuerdo con la cultura, pueblo o rasgos fisicos del individuo este se reconoce como: indigena, gitano (a) (Rom), raizal del archipielago de San Andres, Providencia y Santa Catalina, palenquero (a) de San Basilio o negro (a), mulato (a) (afrodescendiente) o afrocolombiano(a).")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Campesino",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica si el individuo se considera campesino o si prefiere no informarlo.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Actividad",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Actividad que en la que el individuo ocupo la mayor parte del tiempo la semana pasada.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Horas",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Cantidad de horas durante las cuales el individuo laboro la semana pasada.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "EPS",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica si el individuo esta afiliado (a), es cotizante o es beneficiario (a) de alguna entidad de seguridad social en salud (Entidad promotora de salud [EPS] o entidad promotora de salud subsidiada EPS-S).")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "S. Social",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica si el regimen de seguridad social en salud al que esta afiliado el individuo es contribuitivo o especial (Seleccionar si), si es subsidiado (seleccionar no) o si prefiere no informarlo.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Edad hijo",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica la edad a la cual el individuo tuvo su primer hijo.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Dispositivos",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica la cantidad de dispositivos con acceso a internet en el hogar del individuo, entre estos se incluyen computadores, tabletas, celulares, consolas, televisores y reproductores de sonido.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Ingresos",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica los ingresos totales de los miembros del hogar del individuo durante el mes pasado.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Energia",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Cantidad en pesos pagada el mes pasado o la ultima vez por electricidad consumida en el hogar del individuo.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Gas",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Cantidad en pesos pagada el mes pasado o la ultima vez por el servicio de gas natural en el hogar del individuo.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Vivienda",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica si la vivienda del hogar es propia del jefe de hogar del individuo o si es arrendada.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Region",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica la region en la que se encuentra la vivienda del individuo.")
+                    )
+                ),
+                material_column(
+                    width = 18,
+                    material_card(
+                        title = "Vivienda (ultima fila)",
+                        divider = TRUE,
+                        depth = 5,
+                        ("Indica el tipo de la vivienda, en caso de que sea una casa o un apartamento se selecciona 1, si se trata de cuarto(s), vivienda tradicional indigena u otros se selecciona 0.")
+                    )
+                )
+            )
+        )
     ),
     material_side_nav_tab_content(
         class = "container",
         side_nav_tab_id = "link",
-        tags$h1("Second Side-Nav Tab Content")
+        tags$div(
+            class = "",
+            style = "margin-top: 25px;
+                    margin-left: -125px;",
+            material_row(
+                material_column(
+                    width = 5,
+                    material_card(
+                        title = (tags$a(href="https://github.com/oorbe/TAE-Tabajo-1-modelos-regresion", "Repositorio github")),
+                        depth = 5,
+                        divider=TRUE
+                    )
+                )
+            ),
+            material_row(
+                material_column(
+                    width = 5,
+                    material_card(
+                        title = (tags$a(href="www.rstudio.com", "Video e informe")),
+                        divider = TRUE,
+                        depth = 5,
+                    )
+                )
+            ),
+            material_row(
+                material_column(
+                    width = 5,
+                    material_card(
+                        title = (tags$a(href="www.rstudio.com", "Rpubs")),
+                        divider = TRUE,
+                        depth = 5,
+                    )
+                )
+            )
+            
+        )
     )
     
 )
