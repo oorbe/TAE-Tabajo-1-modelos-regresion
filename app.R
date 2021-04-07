@@ -373,7 +373,8 @@ ui <- material_page(
         side_nav_tab_id = "variables",
         tags$div(
             class = "",
-            style = "margin-top: 25px;",
+            style = "margin-top: 25px;
+                     margin-left: -125px;",
             material_row(
                 material_column(
                     width = 18,
@@ -543,9 +544,43 @@ ui <- material_page(
     material_side_nav_tab_content(
         class = "container",
         side_nav_tab_id = "link",
-        tags$h1("Second Side-Nav Tab Content")
-    )
+        tags$div(
+            class = "",
+            style = "margin-top: 25px;
+                    margin-left: -125px;",
+            material_row(
+                material_column(
+                    width = 5,
+                    material_card(
+                        title = (tags$a(href="https://github.com/oorbe/TAE-Tabajo-1-modelos-regresion", "Repositorio github")),
+                        depth = 5,
+                        divider=TRUE
+                    )
+                )
+            ),
+            material_row(
+                material_column(
+                    width = 5,
+                    material_card(
+                        title = (tags$a(href="www.rstudio.com", "Video e informe")),
+                        divider = TRUE,
+                        depth = 5,
+                    )
+                )
+            ),
+            material_row(
+                material_column(
+                    width = 5,
+                    material_card(
+                        title = (tags$a(href="www.rstudio.com", "Rpubs")),
+                        divider = TRUE,
+                        depth = 5,
+                    )
+                )
+            )
     
+)
+)
 )
 server<- function(input, output, session) {
     
