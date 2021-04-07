@@ -9,8 +9,8 @@ Aqui hay 4 carpetas, cada una con los siguientes archivos:
 
 
 Integrantes: 
-Juan Manuel Pajoy Lopez
-Juan Pablo Ortega Medina
-Juan Pablo Carvajal García
-Sara Camila Hoyos Montoya
-Oliver Orley Rodriguez Berrocal
+- Juan Manuel Pajoy Lopez
+- Juan Pablo Ortega Medina
+- Juan Pablo Carvajal García
+- Sara Camila Hoyos Montoya
+- Oliver Orley Rodriguez Berrocal
