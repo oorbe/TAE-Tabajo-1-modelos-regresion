@@ -22,6 +22,8 @@ library(randomForest)
 ui <- material_page(
     title = "Prediccion de cantidad de hijos por hogar en Colombia",
     nav_bar_fixed = TRUE,
+    primary_theme_color = "#5CDB93",
+    secondary_theme_color = "#05396A",
     # Place side-nav in the beginning of the UI
     material_side_nav(
         fixed = TRUE,
