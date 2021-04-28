@@ -1,0 +1,133 @@
+---
+title: "Informe técnico - Número de hijos por hogar en Colombia"
+author: "Oliver Rodriguez, juan pajoy, sara hoyos, juan ortega, juan carvajal"
+date: "27/4/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+A lo largo del tiempo se ha logrado evidenciar el cómo implican diferentes variables en el crecimiento demográfico de un país tanto desarrollado como por el contrario en vía de desarrollo como lo es Colombia, por lo que es de vital importancia prestarles oportuna atención debido a la existencia del vínculo que hay entre la demografía y la calidad de vida de las personas y la pobreza del país [1]. Variables clave como la educación marcan la diferencia que rompe el círculo vicioso que se encuentra entre la desinformación y la maternidad, lo que desencadena en un crecimiento descontrolado del tamaño del hogar.
+
+Para entender el crecimiento del tamaño del hogar debemos clasificar diferentes factores que influyen tanto en el deseo de la cantidad de hijos como en los hijos obtenidos realmente por núcleo familiar. Algunos de estos factores son el estado socioeconómico de la familia teniendo en cuenta ingresos y riqueza, el nivel de escolaridad puesto que las familias que poseen un nivel de escolaridad más bajo tienden a tener menores conocimientos sobre el uso de métodos anticonceptivos. Por otro lado, factores que afectan el número de hijos en el hogar son es estado civil y aspectos culturales como lo puede ser pertenecer a diferentes etnias o religiones [2].
+
+El principal foco de estudio para determinar el número de hijos presentes en el hogar está en averiguar cuál es la calidad de vida de las personas presentes en aquel núcleo familiar, pues esto está ligado a su nivel de educación y a su esperanza de lograr oportunidades laborales para mejorar aquella calidad de vida que se está viendo afectada. Contraproducente a esto debido a la desinformación y a la falta de acceso a recursos y métodos de planificación familiar, el número de hijos crece o se tienen más hijos con la esperanza de que estos en el futuro sean un aporte más para la casa, lo que resume en aquel círculo vicioso en donde por mala educación sexual la pobreza crece.
+
+Nos resulta natural entonces pensar que en los lugares más marginados encontraremos aquel número de hijos no deseados mayor, además de las áreas rurales en donde por la esperanza de mano de obra y costumbres aún áridas, se permita que el número de hijos crezcan significativamente lo cual resulta en una afectación a la pobreza y la falta de acceso a los recursos.
+
+Se es necesario que el gobierno tenga en cuenta estos focos de crecimiento demográfico y los ataque con planes de protección, programas de planificación familiar y subsidios de educación, tanto con el fin de bajar el índice de crecimiento demográfico con hijos no deseados, como por el deseo de mejorar la calidad de vida de la población yaciente en el seno del problema.
+
+Gracias a esto se realiza una aplicación web enfocada para programas gubernamentales donde estos puedan con esta, encontrar hogares y zonas vulnerables donde se puedan invertir los recursos para mejorar la calidad de vida de las personas. Esto por medio de programas como lo son Familias en acción, mejoramiento de vivienda, subsidio familiar, jóvenes en acción, generación E, nutrición, programas de planificación familiar y entre otras ayudas que atacan directamente los causante del crecimiento acelerado de la población por nacimientos no deseados en lugares marginados o con falta de recursos. Esto por medio de una aplicación sencilla de manejar, intuitiva, rápida y eficaz con un modelo entrenado por medio de una base de datos con el historial de la población colombiana censada en el año 2019.
+
+
+## Objetivos
+
+**Objetivo general**
+
+  * Desarrollar un sistema capaz de calcular el número de hijos que podria tener una familia en     Colombia.
+  
+**Objetivos específicos**
+
+  * Analizar y escoger las variables que más describan el problema.
+
+  * Comparar diferentes modelos de regresión para el cálculo de la cantidad de hijos para           encontrar el modelo que mejor se ajuste al problema.
+  
+  * Diseñar una aplicaión web para el facil acceso a los usuarios del sistema desarrollado.
+  
+## Retos
+
+Partiremos de la información suministrada por La Encuesta de Calidad de Vida (ECV) la cual es una investigación que el DANE realiza con el objetivo de de recopilar la información de los hogares colombianos permitiendo así tener una visión general de las condiciones de vida de los hogares, teniendo diversos aspectos como lo son el acceso a bienes y servicios públicos, privados o comunes, salud, educación, atención integral de niños y niñas menores de 5 años, el uso energético, tecnologías de información y comunicación, entre otras variables [3].
+
+Estas encuestas de calidad de vida han permitido mejorar la captura de información permitiendo así promover la investigación sobre las condiciones de vida del hogar [3], donde para nuestro caso nos servirá como fuente para identificar la relación entre las variables que nos encontramos en los hogares y predecir el número de hijos en hogares colombianos.
+
+Las variables más importantes suministradas por la encuesta se encuentran relacionadas por temática como se muestra: 
+
+
+
+ <table>
+    <tr>
+      <th>Temática</th>
+      <th>Variables más importantes</th>
+      <th>Descripción de la temática</th>
+    </tr>
+    <tr>
+      <td>Tipo de vivienda y sus características físicas</td>
+      <td>Material de paredes y pisos</td>
+      <td>
+        Capta información relacionada con las características de la vivienda (tipo de vivienda, material de pisos y paredes, servicios públicos, privados o comunales y afectaciones procedentes de desastres naturales o contaminación en el entorno)</td>
+    </tr>
+    <tr>
+      <td>Servicios del hogar</td>
+      <td>Conexión a servicios públicos, privados o comunales y calidad de los mismos y clasificación de basuras</td>
+      <td>Se busca información relacionada con hacinamiento crítico, calidad de los servicios con que cuente el hogar</td>
+    </tr>
+    <tr>
+      <td>Variables demográfica</td>
+      <td>Sexo, edad, parentesco, estado civil, migración, estudios de padre y madre cuando estos noresiden en el hogar</td>
+      <td>Se busca identificar las personas que conforman el hogar y establecer su parentesco con el jefe(a) del hogar. Además, se realiza una caracterización demográfica de todos los integrantes en aspectos como sexo, edad, estado civil, autoreconocimiento étnico y campesino, sitio y lugar de nacimiento, migración, y se indaga por el bienestar subjetivo de las personas de 15 años y más.</td>
+    </tr>
+    <tr>
+      <td>Salud</td>
+      <td>Cobertura del SGSSS por regímenes, morbilidad, acciones tomadas para enfrentar enfermedades padecidas durante los últimos 30 días, tiempo para la atención en urgencias y para la consulta médica, fuentes para cubrir los gastos en salud y opinión sobre la calidad de los servicios</td>
+      <td>Se busca obtener información sobre las personas que manifiestan estar afiliadas al SGSSS y su afiliación por regímenes, el uso de los servicios de medicina general, medicina especializada, entre otras</td>
+    </tr>
+    <tr>
+      <td>Cuidado de los niños y niñas menores de 5 años</td>
+      <td>Sitio de permanencia de los niños menores de cinco años durante lamayor parte del tiempo entre semana, tipo de hogar comunitario, guardería, jardín o centro de desarrollo infantil al que asisten, persona que se encarga del cuidado de los niños menores de 5 años, niños que son llevados a control de crecimiento y desarrollo</td>
+      <td>Se busca identificar la persona o institución sobre la cual recae la responsabilidad de la atención y cuidado de los niños y niñas menores de 5 años. Igualmente determinar el acceso a los establecimientos públicos y privados destinados a la protección y aprendizaje de los(as) menores</td>
+    </tr>
+    <tr>
+      <td>Educación (personas de 5 años y más)</td>
+      <td>Alfabetismo, asistencia escolar, máximo nivel educativo alcanzado y último año aprobado o que esté cursando, tasas brutas y netas de escolaridad, becas, subsidios y créditos</td>
+      <td>El objetivo es identificar las principales características educativas de la población de 5 años y más, en particular el alfabetismo, la asistencia escolar, los niveles educativos alcanzados y años de estudio. Entre otras cosas</td>
+    </tr>
+    <tr>
+      <td>Fuerza de trabajo (personas de 12 años y más)</td>
+      <td>Población económicamente activa (PEA), población económicamente inactiva (PEI), actividad semana pasada, actividades pagas, posición ocupacional, sitio de trabajo, tamaño de la empresa, tipo de transporte utilizado para desplazarse al trabajo e ingresos, subsidios recibidos, ganancias obtenidas.</td>
+      <td>Se busca identificar características laborales las cuales dan indicios sobre la capacidad adquisitiva, de tiempo y de beneficios laborales que afectarían la vida de los miembros del hogar.</td>
+    </tr>
+    <tr>
+      <td>Trabajo infantil</td>
+      <td>Actividad principal realizada por los menores de 5 a 11 años en la semana de referencia, ocupación,actividad donde realizan la labores, ingresos percibidos y sitios de trabajo y horas trabajadas</td>
+      <td>Tiene como objetivo conocer la participación de los niños(as) entre 5 y 11 años en actividades económicas y no económicas. Asimismo determinar la proporción de menores que participan del mercado laboral y caracterizar su forma de participación.</td>
+    </tr>
+    <tr>
+      <td>Tenencia y financiación de la vivienda</td>
+      <td>Tipo de tenencia de la vivienda; tenencia de escritura de propiedad; subsidios recibidos para la compra, construcción, mejora, titulación o escrituración de la vivienda</td>
+      <td>Se busca establecer la condición de ocupación de la vivienda por parte del hogar y obtener información con respecto a los subsidios para vivienda provenientes del gobierno o de otra institución.</td>
+    </tr>
+    <tr>
+      <td>
+        Condiciones de vida del hogar</td>
+        <td>Percepción del jefe o cónyuge sobre las condiciones de vida del hogar, hechos de los que han sido víctimas los miembros del hogar en los últimos 12 meses, ayudas o subsidios recibidos por miembros del hogar en los últimos 12 meses, tenencia de bienes en el hogar y conexión a internet.</td>
+        <td>Se indaga sobre la percepción en cuanto a pobreza, inseguridad, la ocurrencia de hechos violentos y la capacidad de los ingresos del hogar para cubrir los gastos mínimos. Igualmente se busca conocer los bienes que posee el hogar, no solamente como patrimonio, sino como satisfactores de necesidades.</td>
+    </tr>
+    <tr>
+      <td>Tecnologías de información y comunicación</td>
+      <td>Frecuencias de uso de computador y de internet, lugares de acceso a Internet y servicios o actividades para uso de internet y tenencia de celular.</td>
+      <td>Se encarga de medir el acceso a las Tecnologías de Información y Comunicación (TIC), con enfoque en el uso del computador y la Internet, indagando por: lugares de uso, frecuencia de uso, actividades realizadas a través de Internet,tenencia y uso de la telefonía móvil celular de las personas de 5 años y más.</td>
+    </tr>
+  </table>
+Tabla 1. Variables relacionadas por temática tomadas de [3]
+
+
+
+
+
+Partiendo de esto, con las variables identificadas, es necesario realizar una selección de las más importantes que influyen o pueden influir en el número de hijos por hogar, además de identificar las variables con datos nulos y la posible recodificación de estos para facilitar el análisis y estudio estadístico de los datos obtenidos.
+
+Tras realizar el análisis exploratorio de los datos y seleccionar las variables de importancia, el próximo reto es intentar reducir el número de variables con el fin de facilitar el entrenamiento del modelo y que no se vayan a pedir datos que en el fondo no son relevantes para el resultado final. 
+
+## Materiales y métodos
+
+## Referencias
+
+[1] Núñez Méndez, Jairo Augusto; Cuesta Rueda, Laura Andrea (2006). Demografía y pobreza en Colombia.  [Online]. Available:https://repositorio.uniandes.edu.co/handle/1992/8008
+
+[2] FORERO, Nohora  and  GAMBOA, Luis Fernando. Family Size in Colombia: Guessing or Planning? Intended vs. Actual Family Size in Colombia. Desarro. soc. [online]. 2009, n.64 [cited  2021-04-05], pp.85-118. Available from: http://www.scielo.org.co/scielo.php?script=sci_arttext&pid=S0120-35842009000200004&lng=en&nrm=iso. ISSN 0120-3584.
+
+[3] Dirección de Metodología y Producción Estadística (2019).  Metodología Encuesta Nacional de Calidad de Vida - ECV
