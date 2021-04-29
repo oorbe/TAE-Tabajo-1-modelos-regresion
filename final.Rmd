@@ -1,6 +1,6 @@
 ---
 title: "consolidacion de datos"
-author: "Oliver Rodriguez, juan pajoy, sara hoyos, juan ortega, juan carvajal"
+author: "Oliver Rodriguez, Juan Pajoy, Sara Hoyos, Juan ortega, Juan Carvajal"
 date: "31/3/2021"
 output: html_document
 editor_options: 
@@ -12,7 +12,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r echo=T, message=FALSE, warning=FALSE, include=FALSE}
 library(fastDummies)
 library(tidyverse)
 # Funciones a utilizar 
@@ -24,9 +24,9 @@ change_na <- function(x){
 
 # TABLAS PERSONAS
 
-carateristicas y composicion del hogar:
+## Carateristicas y composicion del hogar:
 
-```{r}
+```{r echo=T, results='hide'}
 d_f <- read.csv('Caracteristicas y composicion del hogar.csv', header = T, sep = ';')
 
 no_hijos <-   d_f %>% 
@@ -74,9 +74,9 @@ rm(d_f); rm(df1); rm(no_hijos); rm(df_2)
 
 ```
 
-# Fuerza de trabajo :
+## Fuerza de trabajo :
 
-```{r}
+```{r echo=T, results='hide'}
 #Selección variables y renombrado
 base <- read.csv('Fuerza de trabajo.csv',sep = ';')
 df1 <- base %>% select(ï..DIRECTORIO,SECUENCIA_ENCUESTA,SECUENCIA_P,P6240,P8624,P415)
@@ -92,9 +92,9 @@ fuerza <- df1
 rm(base) ; rm(df1)
 ```
 
-BASE TECNOLOGIAS DE INFO Y COMUNICACIÓN (TIC)
+## Base tecnologias de info y comunicacion (TIC):
 
-```{r}
+```{r echo=T, results='hide'}
  
 Dt_TIC <- read.csv("Tecnologías de información y comunicación.csv",header = TRUE,sep = ";")
 # Con esta BD observamos si los hogares con mayor dispositivos con acceso a internet son los que 
@@ -118,9 +118,9 @@ Dt_TIC$TOT_DISPOSITIVOS <- rowSums(Dt_TIC[,c("PC_ESCRITORIO","PC_PORTATIL","TABL
 Dt_TIC <- Dt_TIC[,c("ï..DIRECTORIO","SECUENCIA_ENCUESTA","SECUENCIA_P",'TOT_DISPOSITIVOS')]
 ```
 
-BASE SALUD
+## Base salud:
 
-```{r}
+```{r echo=T, results='hide'}
 
 Dt_Salud <- read.csv("Salud.csv",header = TRUE,sep = ";")
 Dt_Salud <- as_tibble(subset(Dt_Salud,select = c("ï..DIRECTORIO","SECUENCIA_ENCUESTA","SECUENCIA_P","P6090",
@@ -142,7 +142,7 @@ Dt_Salud <- Dt_Salud %>%
   
 ```
 
-# uniones tablas personas:
+## Uniones tablas personas:
 
 ```{r}
 #unimos labases de  personas
@@ -180,9 +180,9 @@ rm(caracteristicas) ; rm(Dt_TIC) ; rm(Dt_Salud); rm(fuerza)
 p3 <- p3[,-11]
 ```
 
-# Tablas Hogar:
+# TABLAS HOGAR:
 
-Uso de energéticos del hogar:
+## Uso de energéticos del hogar:
 
 ```{r}
 ener_hogar <- read.csv('Uso de energéticos del hogar.csv', sep=';')
@@ -195,7 +195,7 @@ ener_hogar <- ener_hogar %>% replace_na(list(ener_consumo=0,gas_consumo=0)) # Re
 
 ```
 
-Servicios del hogar:
+## Servicios del hogar:
 
 VALORES PARA: - FUENTE_ILUMUNACION: 1 Energía eléctrica 2 Lámpara de Gas
 Propano 3 Lámpara de Kereosene, petróleo, gasolina 4 Lámpara de pilas o
@@ -206,16 +206,16 @@ baterias 5 Velas
     con descarga directa a fuentes de agua (bajamar) 6 No tiene servicio
     sanitario
 
-```{r}
+```{r echo=T, warning=F}
 base <- read.csv("Servicios del hogar.csv",header = TRUE,sep=";",dec=",")
 servicios_hogar<-base[,c("ï..DIRECTORIO", "SECUENCIA_ENCUESTA", "SECUENCIA_P", "I_HOGAR")]
 
 rm(base) ; rm(base_fin)
 ```
 
-TENENCIA Y FINANCIACIÓN DE LA VIVIENDA (K)
+## Tenencia y financiacion de la vivienda (K):
 
-```{r}
+```{r echo=T, results='hide'}
 #Selección variables y renombrado
 base2 <- read.csv("Tenencia y financiación de la vivienda que ocupa el hogar.csv",header = TRUE,sep=";",dec=",")
 df2 <- base2 %>% select(ï..DIRECTORIO,SECUENCIA_ENCUESTA,SECUENCIA_P,P5095,P5100,P5110,P5130,P5140,P5160)
@@ -247,7 +247,7 @@ tenencia_finan <- tenencia_finan %>%
 rm(base2) ; rm(df2)
 ```
 
-# uniones tablas hogar:
+# Uniones tablas hogar:
 
 ```{r}
 h1 <- servicios_hogar %>% 
@@ -263,9 +263,7 @@ rm(ener_hogar) ; rm(servicios_hogar) ; rm(tenencia_finan)
 
 # TABLAS DE VIVIENDAS:
 
-sara
-
-```{r}
+```{r echo=T, results='hide'}
 # Seleccionando directorio de trabajo 
 
 # Lectura y extracción de Variables significativas
@@ -292,9 +290,9 @@ colSums (is.na ( Dt_Vivienda )) # No tiene valores NA's
  
 ```
 
-Union final
+# Union final:
 
-```{r}
+```{r echo=T, results='hide'}
 datos <- p3 %>% 
   full_join(h2, by = c('ï..DIRECTORIO' = 'ï..DIRECTORIO', 'SECUENCIA_P'='SECUENCIA_ENCUESTA'))
 
@@ -321,7 +319,7 @@ datos[,caracters] <- apply(datos[,caracters], 2, as.character)
 datos$horas <- as.numeric(datos$horas)
 datos <- datos %>% relocate(where(is.numeric), .before = where(is.character))
 str(datos)
-# esportamos los datos
+# exportamos los datos
 write.csv(datos,file = 'datos.csv')
 
 ```
@@ -339,11 +337,11 @@ previo mediante estudios y articulos encontrados en la web.
 Una vez seleccionadas nuestras variables y obtenido nuestro conjunto de
 datos final se realiza un analisis de correlación entre variables
 númericas para asi determinar y descartar variables posiblementes
-redundantes para nuestro analísis. No se encuentran correlaciones
+redundantes para nuestro análisis. No se encuentran correlaciones
 mayores a $0.75$ por lo que se determina dejar todas las variables para
 predecir el número de hijos.
 
-Se realizá unas series de pruebas utilizando KNN tanto en la
+Se realizá una serie de pruebas utilizando KNN tanto en la
 programación paso a paso implementada en clase como con las funciones
 disponibles en el paquete de Caret; los resultados no fueron optimos
 debido al tiempo que toma KNN en realizar un proceso de selección de
@@ -562,7 +560,7 @@ p15 <- predict(knn15, newdata = datos_test[1,])
 
 ```
 
-\*\* K=20\*\*
+**K=20**
 
 ```{r}
 inicio <- Sys.time()
@@ -603,7 +601,7 @@ p30 <- predict(knn30, newdata = datos_test[1,])
 
 Una vez probada la modelación con knnreg() con todas las variables
 predictivas de nuestra base de datos se encontro que el menor RMSE para
-estos modelos de regresión KNN se tiene con k=20, a medidas que se
+estos modelos de regresión KNN se tiene con k=20, a medida que se
 aumenta k no se observa diferencia significativa en la mejora del RMSE,
 es decir de que este entregue predicciones mejores por lo cual
 utilizaremos este para entrenar y validar nuestros datos, asi mismo para
@@ -801,7 +799,7 @@ x <- model.matrix(n~.,datos)[,-1]
 y <- datos$n
 ```
 
-# primero ridge:
+# Primero ridge:
 
 ```{r}
 grid <- 10^seq(10,-1,length=100)
@@ -849,12 +847,14 @@ rigge.coef <- predict (out ,type="coefficients",s=bestlam )[1:19,]
 round(rigge.coef[rigge.coef>0.0001 | rigge.coef<0 ],6)
 ```
 
-# AHORA REALIZAMOS LASSO:
+# Ahora realizamos lasso:
 
 ```{r}
 lasso.mod =glmnet (x[train ,],y[train],alpha =1, lambda =grid)
 plot(lasso.mod)
 ```
+
+
 
 Aqui se observa que al aumentar los valores de lambda muchos de los
 parametros tieneden a cero.
@@ -874,7 +874,7 @@ lasso.coef=predict(out, type ="coefficients",s=bestlam )[1:19,]
 lasso.coef[lasso.coef!=0]
 ```
 
-# los resultado obenido por los diferentes metodos para la selección de variables son:
+# Los resultados obenidos por los diferentes metodos para la selección de variables son:
 
 ```{r}
 # forward backward y stepwice, sus resultados me dan iguales:
@@ -891,7 +891,7 @@ print('\n')
 lasso.coef[lasso.coef!=0]
 ```
 
-# division en entrenamiento y prueba, considerando la cantidad de datos que se tienen, se opta por hacer un particionamiento para modelar en lugar de utilizar validación cruzada:
+# Division en entrenamiento y prueba, considerando la cantidad de datos que se tienen, se opta por hacer un particionamiento para modelar en lugar de utilizar validación cruzada:
 
 ```{r}
 library(caret)
@@ -971,7 +971,7 @@ respuesta deben ser positivos y hay muchos ceros.
 # new_model <- lm(((y^lambda-1)/lambda) ~ x)  
 ```
 
-# tree regression:
+# Tree regression:
 
 Ahora se realiza el ajuste del modelo con un valor cp(parámetro de
 complejidad) pequeño, que nos ayudará a encontrar una profundidad
@@ -1073,7 +1073,7 @@ de estos factores son el estado socioeconómico de la familia teniendo en
 cuenta ingresos y riqueza, el nivel de escolaridad puesto que las
 familias que poseen un nivel de escolaridad más bajo tienden a tener
 menores conocimientos sobre el uso de métodos anticonceptivos. Por otro
-lado, factores que afectan el número de hijos en el hogar son es estado
+lado, factores que afectan el número de hijos en el hogar son el estado
 civil y aspectos culturales como lo puede ser pertenecer a diferentes
 etnias o religiones [2].
 
